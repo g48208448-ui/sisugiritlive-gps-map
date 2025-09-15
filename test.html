@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live GPS Tracking</title>
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <style>
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // 지도 초기화 (도쿄 좌표 예시)
+    var map = L.map('map').setView([35.6812, 139.7671], 13);
+
+    // OSM 타일 불러오기
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // 내 위치 마커
+    var marker = L.marker([35.6812, 139.7671]).addTo(map);
+
+    // 브라우저 Geolocation API로 실시간 위치 추적
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition(function (position) {
+        var lat = position.coords.latitude;
+        var lon = position.coords.longitude;
+
+        // 마커 이동
+        marker.setLatLng([lat, lon]);
+        // 지도 중심 이동
+        map.setView([lat, lon], 16);
+      }, function (error) {
+        alert("위치 추적 실패: " + error.message);
+      }, {
+        enableHighAccuracy: true,
+        maximumAge: 0,
+        timeout: 10000
+      });
+    } else {
+      alert("이 브라우저에서는 GPS를 지원하지 않습니다.");
+    }
+  </script>
+</body>
+</html>
